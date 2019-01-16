@@ -1,0 +1,57 @@
+# Compiled from multiple sources
+
+$ sudo apt-get update
+$ sudo apt-get install lirc
+
+# Add to /etc/modules file
+lirc_dev
+lirc_rpi gpio_in_pin=18 gpio_out_pin=17
+
+# Add to /etc/lirc/hardware.conf
+LIRCD_ARGS="--uinput --listen"
+LOAD_MODULES=true
+DRIVER="default"
+DEVICE="/dev/lirc0"
+MODULES="lirc_rpi"
+
+# Update in /boot/config.txt
+dtoverlay=lirc-rpi,gpio_in_pin=18,gpio_out_pin=17
+
+# Update in /etc/lirc/lirc_options.conf
+driver    = default
+device    = /dev/lirc0
+
+# Restart service
+$ sudo /etc/init.d/lircd stop
+$ sudo /etc/init.d/lircd start
+
+# Reboot
+$ reboot
+
+# Test if LIRC is working
+$ sudo /etc/init.d/lircd stop
+
+# Test if LIRC is receiving
+$ mode2 -d /dev/lirc0
+<key press on remote should result in similar to below>
+pulse 560
+space 1706
+pulse 535
+
+# Record a custom remote
+$ sudo /etc/init.d/lircd stop
+$ sudo irrecord -d /dev/lirc0 ~/lircd.conf
+
+# at the end ~/<REMOTE-NAME>.lircd.conf file will be generated
+# Move additional buttons to /etc/lirc/lircd.conf or add remote to this, from <BEGIN REMOTE> TO <END REMOTE>
+
+# backup lircd.conf
+$ sudo mv /etc/lirc/lircd.conf /etc/lirc/lircd_BACKUP.conf
+
+# Copy new lircd.conf to replace the old one
+$ sudo cp ~/lircd.conf /etc/lirc/lircd.conf
+$ sudo /etc/init.d/lircd start
+
+# you can test if the recorded remote works by
+$ irsend -# 2 SEND_ONCE <tv> KEY_CHANNELUP
+$ irsend -# 2 2SEND_ONCE <hdmi> KEY_1
