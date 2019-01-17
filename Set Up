@@ -54,4 +54,4 @@ $ sudo /etc/init.d/lircd start
 
 # you can test if the recorded remote works by
 $ irsend -# 2 SEND_ONCE <tv> KEY_CHANNELUP
-$ irsend -# 2 2SEND_ONCE <hdmi> KEY_1
+$ irsend -# 2 SEND_ONCE <hdmi> KEY_1
